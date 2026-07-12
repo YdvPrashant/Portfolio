@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo_Black, Space_Grotesk, Space_Mono } from "next/font/google";
+import SmoothScroll from "@/components/providers/SmoothScroll";
+import GrainOverlay from "@/components/fx/GrainOverlay";
 import "./globals.css";
 
 const display = Archivo_Black({
@@ -38,7 +40,10 @@ export default function RootLayout({
       lang="en"
       className={`${display.variable} ${grotesk.variable} ${mono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-void font-body text-bone">{children}</body>
+      <body className="min-h-full bg-void font-body text-bone">
+        <SmoothScroll>{children}</SmoothScroll>
+        <GrainOverlay />
+      </body>
     </html>
   );
 }
