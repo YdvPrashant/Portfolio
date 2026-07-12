@@ -4,7 +4,6 @@ import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
 import Stack from "@/components/sections/Stack";
 import Work from "@/components/sections/Work";
-import Credentials from "@/components/sections/Credentials";
 import Contact from "@/components/sections/Contact";
 
 const personJsonLd = {
@@ -44,7 +43,6 @@ export default function Home() {
       <About />
       <Stack />
       <Work />
-      <Credentials />
       <Contact />
       <MotionOrchestrator />
     </main>

@@ -1,5 +1,8 @@
 import DitherPlanet from "@/components/fx/DitherPlanet";
 import DitherField from "@/components/fx/DitherField";
+import OrbitSatellite from "@/components/fx/OrbitSatellite";
+import PlanetClock from "@/components/fx/PlanetClock";
+import ShootingStars from "@/components/fx/ShootingStars";
 import { heroMeta, identity } from "@/data/resume";
 
 /** 01/HELLO — giant name over the dithered planet in its cream ring. */
@@ -18,17 +21,26 @@ export default function Hero() {
         seed={412}
       />
 
+      {/* occasional mint streaks across the sky (also the click-burst layer) */}
+      <ShootingStars />
+
       {/* planet in the cream ring, crosshaired like the poster */}
       <div
         data-reveal="planet"
-        className="relative mx-auto mt-4 w-[min(68vw,300px)] lg:absolute lg:right-[5%] lg:top-1/2 lg:mt-0 lg:w-[min(36vw,540px)] lg:-translate-y-1/2"
+        className="relative isolate mx-auto mt-4 w-[min(68vw,300px)] lg:absolute lg:right-[5%] lg:top-1/2 lg:mt-0 lg:w-[min(34vw,520px)] lg:-translate-y-1/2"
       >
-        <div className="relative aspect-square w-full rounded-full bg-cream">
+        <OrbitSatellite />
+        <div className="relative z-10 aspect-square w-full rounded-full bg-cream">
           <div className="absolute inset-[15%] rounded-full bg-void" />
-          <DitherPlanet className="absolute inset-[16.5%] overflow-hidden rounded-full" />
+          <DitherPlanet
+            interactive
+            className="absolute inset-[16.5%] overflow-hidden rounded-full"
+          />
           {/* hairline crosshair */}
           <div aria-hidden className="absolute left-1/2 top-[-8%] h-[116%] w-px bg-bone/15" />
           <div aria-hidden className="absolute left-[-8%] top-1/2 h-px w-[116%] bg-bone/15" />
+          {/* analogue hour clock: stationary ticks + real-time astronaut */}
+          <PlanetClock />
         </div>
       </div>
 
@@ -42,7 +54,7 @@ export default function Hero() {
           {identity.tagline}
         </p>
         <h1
-          className="display-type mt-6 text-[clamp(3.6rem,13vw,11.5rem)]"
+          className="display-type mt-6 text-[clamp(3.6rem,13vw,11.5rem)] lg:text-[clamp(4rem,8.4vw,10.5rem)]"
           aria-label={identity.name}
         >
           <span aria-hidden data-hero-line className="block">

@@ -177,6 +177,39 @@ export default function MotionOrchestrator() {
       };
     });
 
+    /* — comet companion: a scrubbed glide that swaps sides through the
+       sections; desktop + motion-OK only, reverted automatically otherwise — */
+    mm.add(
+      "(prefers-reduced-motion: no-preference) and (min-width: 768px)",
+      () => {
+        const comet = document.querySelector<HTMLElement>("[data-comet]");
+        if (!comet || !document.getElementById("main")) return;
+        gsap.set(comet, { opacity: 1 });
+        const vw = () => window.innerWidth;
+        const vh = () => window.innerHeight;
+        gsap
+          .timeline({
+            defaults: { ease: "none" },
+            scrollTrigger: {
+              trigger: "#main",
+              start: "top top",
+              end: "bottom bottom",
+              scrub: 0.8,
+              invalidateOnRefresh: true,
+            },
+          })
+          .fromTo(
+            comet,
+            { x: () => vw() * 0.93, y: () => vh() * 0.28, rotation: 10 },
+            { x: () => vw() * 0.93, y: () => vh() * 0.68, rotation: 80 }, // 01 down the right edge
+          )
+          .to(comet, { x: () => vw() * 0.05, y: () => vh() * 0.4, rotation: 215 }) // 02 cross to the left
+          .to(comet, { x: () => vw() * 0.05, y: () => vh() * 0.75, rotation: 265 }) // 03 down the left edge
+          .to(comet, { x: () => vw() * 0.92, y: () => vh() * 0.3, rotation: 395 }) // 04 swing back right
+          .to(comet, { x: () => vw() * 0.9, y: () => vh() * 0.62, rotation: 450 }); // 05 settle
+      },
+    );
+
     // re-measure triggers once web fonts settle
     document.fonts?.ready.then(() => ScrollTrigger.refresh());
   });

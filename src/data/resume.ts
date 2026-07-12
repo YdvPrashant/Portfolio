@@ -12,7 +12,7 @@ export const identity = {
   name: "Prashant Yadav",
   firstName: "PRASHANT",
   lastName: "YADAV",
-  role: "SOFTWARE DEVELOPER · AI/ML",
+  role: "SOFTWARE DEVELOPER · AI/ML ENGINEER",
   tagline: "Building intelligent systems end-to-end.",
   location: "Lucknow, India",
   coordinates: "26°51'N 80°57'E",
@@ -63,7 +63,7 @@ export type Stat = { value: number; suffix?: string; label: string };
 export const stats: Stat[] = [
   { value: 300, suffix: "+", label: "LeetCode problems solved" },
   { value: 1600, suffix: "+", label: "LeetCode contest rating" },
-  { value: 3, label: "Projects engineered" },
+  { value: 15, suffix: "+", label: "Projects engineered" },
   { value: 1, label: "Platform live in production" },
 ];
 
@@ -137,6 +137,56 @@ export const projects: Project[] = [
   },
 ];
 
+/** 04/WORK — poster header + archive copy (rendered by Work.tsx). */
+export const workCopy = {
+  poster:
+    "THREE FLAGSHIP SYSTEMS — ONE IN PRODUCTION, ONE WATCHING VIDEO STREAMS, ONE MOVING MONEY. THE ARCHIVE HOLDS THE REST.",
+  archiveNote: "SMALLER BUILDS & EXPERIMENTS — SOURCE ON GITHUB.",
+};
+
+/** Compact archive of smaller builds — renders in 04/WORK once non-empty. */
+export type ArchiveProject = {
+  title: string;
+  desc: string;
+  tech: string[];
+  links: { github?: string; live?: string };
+  year?: string;
+};
+
+// ⚠ TODO (Prashant): these four entries are PLACEHOLDERS so you can see the
+// archive grid working. Replace them with your real projects (you have 15+;
+// list the best 4–8 here) — title, one-liner, tech, link. Delete the rest.
+export const otherProjects: ArchiveProject[] = [
+  {
+    title: "YOUR PROJECT 004",
+    desc: "Replace this entry in src/data/resume.ts — title, one-liner, tech, link.",
+    tech: ["EDIT", "ME"],
+    links: { github: identity.github },
+    year: "20XX",
+  },
+  {
+    title: "YOUR PROJECT 005",
+    desc: "Replace this entry in src/data/resume.ts — title, one-liner, tech, link.",
+    tech: ["EDIT", "ME"],
+    links: { github: identity.github },
+    year: "20XX",
+  },
+  {
+    title: "YOUR PROJECT 006",
+    desc: "Replace this entry in src/data/resume.ts — title, one-liner, tech, link.",
+    tech: ["EDIT", "ME"],
+    links: { github: identity.github },
+    year: "20XX",
+  },
+  {
+    title: "YOUR PROJECT 007",
+    desc: "Replace this entry in src/data/resume.ts — title, one-liner, tech, link.",
+    tech: ["EDIT", "ME"],
+    links: { github: identity.github },
+    year: "20XX",
+  },
+];
+
 export type SkillGroup = { index: string; label: string; items: string[] };
 
 export const skills: SkillGroup[] = [
@@ -148,18 +198,12 @@ export const skills: SkillGroup[] = [
   { index: "03.6", label: "TOOLS", items: ["Git", "GitHub", "Docker", "CI/CD", "Vercel", "AWS", "Postman", "Linux"] },
 ];
 
-export const certifications = [
-  { title: "JavaScript", issuer: "CypherSchools" },
-  { title: "React.js", issuer: "Coursera" },
-  { title: "Node.js", issuer: "Coursera" },
-];
-
 export const competitive = {
   headline: "LEETCODE",
   lines: ["300+ problems solved", "1600+ contest rating"],
 };
 
-/** Future jobs go here — Credentials renders them automatically once non-empty. */
+/** Future jobs go here — 04/WORK renders them automatically once non-empty. */
 export type Experience = {
   role: string;
   company: string;
@@ -173,5 +217,5 @@ export const navLinks = [
   { index: "02", label: "ABOUT", href: "#about" },
   { index: "03", label: "STACK", href: "#stack" },
   { index: "04", label: "WORK", href: "#work" },
-  { index: "06", label: "CONTACT", href: "#contact" },
+  { index: "05", label: "CONTACT", href: "#contact" },
 ];

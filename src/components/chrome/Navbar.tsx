@@ -6,7 +6,9 @@ import { useScrollTo } from "@/components/providers/SmoothScroll";
 import Magnetic from "@/components/fx/MagneticButton";
 import MobileMenu from "./MobileMenu";
 
-export default function Navbar() {
+type Props = { resumeAvailable?: boolean };
+
+export default function Navbar({ resumeAvailable = false }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const scrollTo = useScrollTo();
 
@@ -42,14 +44,28 @@ export default function Navbar() {
           <span className="hud-label hidden text-muted lg:inline">
             {identity.coordinates}
           </span>
-          <Magnetic strength={0.25}>
-            <button
-              onClick={() => scrollTo("#contact")}
-              className="hud-label hidden border border-mint bg-mint px-4 py-2 font-bold text-void transition-colors hover:bg-transparent hover:text-mint sm:block"
-            >
-              GET IN TOUCH
-            </button>
-          </Magnetic>
+          {resumeAvailable && (
+            <div className="hidden items-center gap-2 sm:flex">
+              <Magnetic strength={0.25}>
+                <a
+                  href={identity.resumePdf}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hud-label border border-mint bg-mint px-4 py-2 font-bold text-void transition-colors hover:bg-transparent hover:text-mint"
+                >
+                  VIEW CV
+                </a>
+              </Magnetic>
+              <a
+                href={identity.resumePdf}
+                download
+                aria-label="Download CV (PDF)"
+                className="hud-label border border-bone/30 px-3 py-2 font-bold text-bone transition-colors hover:border-mint hover:text-mint"
+              >
+                ⤓
+              </a>
+            </div>
+          )}
           <button
             onClick={() => setMenuOpen(true)}
             aria-expanded={menuOpen}
@@ -63,7 +79,11 @@ export default function Navbar() {
         </div>
       </header>
 
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <MobileMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        resumeAvailable={resumeAvailable}
+      />
     </>
   );
 }

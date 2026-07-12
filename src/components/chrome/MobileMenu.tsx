@@ -7,10 +7,14 @@ import { identity, navLinks } from "@/data/resume";
 import { useLenis, useScrollTo } from "@/components/providers/SmoothScroll";
 import { prefersReducedMotion } from "@/lib/hooks";
 
-type Props = { open: boolean; onClose: () => void };
+type Props = { open: boolean; onClose: () => void; resumeAvailable?: boolean };
 
 /** Full-screen poster-red menu — the Evil Martians moment on mobile. */
-export default function MobileMenu({ open, onClose }: Props) {
+export default function MobileMenu({
+  open,
+  onClose,
+  resumeAvailable = false,
+}: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const scrollTo = useScrollTo();
   const lenis = useLenis();
@@ -121,6 +125,21 @@ export default function MobileMenu({ open, onClose }: Props) {
         <a href={identity.linkedin} target="_blank" rel="noreferrer" tabIndex={open ? 0 : -1}>
           LINKEDIN ↗
         </a>
+        {resumeAvailable && (
+          <>
+            <a
+              href={identity.resumePdf}
+              target="_blank"
+              rel="noreferrer"
+              tabIndex={open ? 0 : -1}
+            >
+              VIEW CV ↗
+            </a>
+            <a href={identity.resumePdf} download tabIndex={open ? 0 : -1}>
+              DOWNLOAD CV ⤓
+            </a>
+          </>
+        )}
       </div>
     </div>
   );

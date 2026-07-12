@@ -3,7 +3,7 @@ import { identity } from "@/data/resume";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Prashant Yadav — Software Developer · AI/ML";
+export const alt = "Prashant Yadav — Software Developer · AI/ML Engineer";
 
 /** Poster-style social card: dark HUD field, cream ring, giant name. */
 export default function OpenGraphImage() {

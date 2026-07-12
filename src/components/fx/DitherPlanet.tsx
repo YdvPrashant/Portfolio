@@ -12,6 +12,8 @@ type Props = {
   cell?: number;
   /** Surface rotation in radians/second. */
   rotSpeed?: number;
+  /** Drag to spin (with momentum) + click to fire a shooting-star burst. */
+  interactive?: boolean;
   className?: string;
 };
 
@@ -24,6 +26,7 @@ type Props = {
 export default function DitherPlanet({
   cell = 3.5,
   rotSpeed = 0.055,
+  interactive = false,
   className = "",
 }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -41,6 +44,8 @@ export default function DitherPlanet({
 
     let raf = 0;
     let running = false;
+    let spin = 0; // user-driven rotation offset (drag)
+    let spinVel = 0; // momentum, spin units per frame
     let W = 0;
     let H = 0;
     let img: ImageData | null = null;
@@ -101,7 +106,7 @@ export default function DitherPlanet({
         const p = px[i];
         const x = p % W;
         const y = (p / W) | 0;
-        const lon = lon0[i] + t * rotSpeed;
+        const lon = lon0[i] + t * rotSpeed + spin;
         const cl = Math.cos(lon);
         const sl = Math.sin(lon);
         // latitude-stretched banding + finer surface detail
@@ -131,6 +136,11 @@ export default function DitherPlanet({
       raf = requestAnimationFrame(loop);
       if (now - last < 33) return; // ~30fps is plenty for dither
       last = now;
+      if (spinVel) {
+        spin += spinVel;
+        spinVel *= 0.94; // momentum decay
+        if (Math.abs(spinVel) < 1e-4) spinVel = 0;
+      }
       render(now / 1000);
     };
     const start = () => {
@@ -155,6 +165,82 @@ export default function DitherPlanet({
     );
     io.observe(wrap);
 
+    // pointer drag-to-spin + quick-click burst (interactive planets only)
+    let teardownPointer = () => {};
+    if (interactive) {
+      let dragging = false;
+      let startX = 0;
+      let startT = 0;
+      let lastX = 0;
+      let lastT = 0;
+      let vel = 0; // px per ms, most recent sample
+      let rafPending = false;
+
+      const drawStatic = () => {
+        rafPending = false;
+        render(reduced ? 0 : performance.now() / 1000);
+      };
+
+      const onDown = (e: PointerEvent) => {
+        dragging = true;
+        spinVel = 0;
+        startX = lastX = e.clientX;
+        startT = lastT = performance.now();
+        vel = 0;
+        try {
+          wrap.setPointerCapture(e.pointerId);
+        } catch {
+          /* capture may be unavailable; non-fatal */
+        }
+      };
+      const onMove = (e: PointerEvent) => {
+        if (!dragging) return;
+        const now = performance.now();
+        const dx = e.clientX - lastX;
+        vel = dx / Math.max(1, now - lastT);
+        spin += dx * 0.006;
+        lastX = e.clientX;
+        lastT = now;
+        // the animation loop is off under reduced motion — repaint on demand
+        if (reduced && !rafPending) {
+          rafPending = true;
+          requestAnimationFrame(drawStatic);
+        }
+      };
+      const onUp = (e: PointerEvent) => {
+        if (!dragging) return;
+        dragging = false;
+        try {
+          wrap.releasePointerCapture(e.pointerId);
+        } catch {
+          /* nothing captured; non-fatal */
+        }
+        const travel = Math.abs(e.clientX - startX);
+        const held = performance.now() - startT;
+        if (travel < 8 && held < 400) {
+          window.dispatchEvent(
+            new CustomEvent("hero:burst", {
+              detail: { x: e.clientX, y: e.clientY },
+            }),
+          );
+        } else if (!reduced) {
+          // carry the fling into momentum (spin units per frame), clamped
+          spinVel = Math.max(-0.35, Math.min(0.35, vel * 0.006 * 33));
+        }
+      };
+
+      wrap.addEventListener("pointerdown", onDown);
+      wrap.addEventListener("pointermove", onMove);
+      wrap.addEventListener("pointerup", onUp);
+      wrap.addEventListener("pointercancel", onUp);
+      teardownPointer = () => {
+        wrap.removeEventListener("pointerdown", onDown);
+        wrap.removeEventListener("pointermove", onMove);
+        wrap.removeEventListener("pointerup", onUp);
+        wrap.removeEventListener("pointercancel", onUp);
+      };
+    }
+
     build();
     render(0);
 
@@ -162,11 +248,21 @@ export default function DitherPlanet({
       stop();
       ro.disconnect();
       io.disconnect();
+      teardownPointer();
     };
-  }, [cell, rotSpeed]);
+  }, [cell, rotSpeed, interactive]);
 
   return (
-    <div ref={wrapRef} aria-hidden className={`pointer-events-none ${className}`}>
+    <div
+      ref={wrapRef}
+      aria-hidden
+      data-cursor={interactive ? "" : undefined}
+      className={`${
+        interactive
+          ? "pointer-events-auto cursor-grab touch-pan-y active:cursor-grabbing"
+          : "pointer-events-none"
+      } ${className}`}
+    >
       <canvas
         ref={canvasRef}
         className="block h-full w-full [image-rendering:pixelated]"

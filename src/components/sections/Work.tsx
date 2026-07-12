@@ -1,6 +1,6 @@
 import Magnetic from "@/components/fx/MagneticButton";
 import SectionHeading from "@/components/fx/SectionHeading";
-import { projects } from "@/data/resume";
+import { projects, workCopy, otherProjects, experience } from "@/data/resume";
 
 /** 04/WORK — red poster header, then dark case files. */
 export default function Work() {
@@ -29,8 +29,7 @@ export default function Work() {
             title="PROOF OF WORK"
           />
           <p className="hud-label mt-8 max-w-md font-bold text-ink/80">
-            THREE SYSTEMS — ONE DEPLOYED TO PRODUCTION, ONE WATCHING VIDEO
-            STREAMS, ONE MOVING MONEY PAPERWORK.
+            {workCopy.poster}
           </p>
         </div>
       </div>
@@ -145,6 +144,99 @@ export default function Work() {
           </article>
         ))}
       </div>
+
+      {/* experience — appears automatically once the array is non-empty */}
+      {experience.length > 0 && (
+        <div className="mx-auto max-w-7xl border-t border-line px-5 py-16 md:px-12 md:py-20">
+          <p className="hud-label text-muted">EXPERIENCE</p>
+          <ul className="mt-6 space-y-8">
+            {experience.map((job) => (
+              <li
+                key={`${job.company}-${job.period}`}
+                data-reveal="log"
+                className="grid gap-2 md:grid-cols-12"
+              >
+                <p className="hud-label text-mint md:col-span-3">{job.period}</p>
+                <div className="md:col-span-9">
+                  <p className="text-lg font-medium">
+                    {job.role} — {job.company}
+                  </p>
+                  <ul className="mt-2 space-y-1.5">
+                    {job.bullets.map((b) => (
+                      <li key={b.slice(0, 24)} className="text-sm text-bone/70">
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* archive — smaller builds, data-driven; hidden when the array is empty */}
+      {otherProjects.length > 0 && (
+        <div className="mx-auto max-w-7xl border-t border-line px-5 py-16 md:px-12 md:py-20">
+          <p className="hud-label flex items-center gap-4 text-bone/80">
+            <span>ARCHIVE</span>
+            <span aria-hidden className="h-px flex-1 bg-current opacity-30" />
+          </p>
+          <p className="hud-label mt-3 text-muted">{workCopy.archiveNote}</p>
+          <div className="mt-8 grid gap-px border border-line bg-line md:grid-cols-2 xl:grid-cols-4">
+            {otherProjects.map((p) => (
+              <div
+                key={p.title}
+                data-reveal="cell"
+                className="flex flex-col bg-void p-6"
+              >
+                <p className="hud-label flex items-baseline justify-between text-muted">
+                  <span>{p.year ?? "—"}</span>
+                  <span aria-hidden className="text-mint">
+                    ■
+                  </span>
+                </p>
+                <h3 className="display-type mt-4 text-xl">{p.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted">
+                  {p.desc}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {p.tech.map((t) => (
+                    <span
+                      key={t}
+                      className="hud-label border border-line px-2 py-0.5 text-[10px] text-bone/60"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-auto flex gap-5 pt-5">
+                  {p.links.live && (
+                    <a
+                      href={p.links.live}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hud-label text-bone/80 transition-colors hover:text-mint"
+                    >
+                      LIVE ↗
+                    </a>
+                  )}
+                  {p.links.github && (
+                    <a
+                      href={p.links.github}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hud-label text-bone/80 transition-colors hover:text-mint"
+                    >
+                      GITHUB ↗
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

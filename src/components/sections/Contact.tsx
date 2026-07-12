@@ -3,7 +3,7 @@ import { join } from "path";
 import Magnetic from "@/components/fx/MagneticButton";
 import { identity } from "@/data/resume";
 
-/** 06/CONTACT — giant transmission CTA over the planet rising at the horizon. */
+/** 05/CONTACT — giant transmission CTA over the planet rising at the horizon. */
 export default function Contact() {
   // build-time check: the resume button appears once the PDF is dropped in public/
   const resumeAvailable = existsSync(
@@ -13,7 +13,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      data-section-index="06"
+      data-section-index="05"
       data-section-label="CONTACT"
       className="relative overflow-hidden border-t border-line"
     >
@@ -28,7 +28,7 @@ export default function Contact() {
       </div>
 
       <div className="relative mx-auto max-w-7xl px-5 pb-56 pt-24 text-center md:px-12 md:pb-72 md:pt-36">
-        <p className="hud-label text-mint">[06] CONTACT — TRANSMISSION OPEN</p>
+        <p className="hud-label text-mint">[05] CONTACT — TRANSMISSION OPEN</p>
 
         <h2
           data-reveal="heading"

@@ -1,5 +1,5 @@
 import SectionHeading from "@/components/fx/SectionHeading";
-import { about, education, stats } from "@/data/resume";
+import { about, competitive, education, stats } from "@/data/resume";
 
 /** 02/ABOUT — the gold poster eruption. */
 export default function About() {
@@ -77,6 +77,24 @@ export default function About() {
                   >
                     {c}
                   </span>
+                ))}
+              </div>
+            </div>
+
+            {/* competitive-programming sticker — HUD window crashing the poster */}
+            <div className="mt-8 border border-ink bg-ink p-6 text-cream shadow-[8px_8px_0_0_var(--color-cream)] md:p-8">
+              <p className="hud-label flex items-center justify-between font-bold text-mint">
+                COMPETITIVE <span aria-hidden>▪</span>
+              </p>
+              <p className="display-type mt-5 text-3xl md:text-4xl">
+                {competitive.headline}
+              </p>
+              <div className="mt-4 space-y-2">
+                {competitive.lines.map((line) => (
+                  <p key={line} className="hud-label text-cream/75">
+                    <span className="text-mint">{line.split(" ")[0]}</span>{" "}
+                    {line.split(" ").slice(1).join(" ").toUpperCase()}
+                  </p>
                 ))}
               </div>
             </div>

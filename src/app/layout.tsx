@@ -1,3 +1,5 @@
+import { existsSync } from "fs";
+import { join } from "path";
 import type { Metadata, Viewport } from "next";
 import { Archivo_Black, Space_Grotesk, Space_Mono } from "next/font/google";
 import { identity } from "@/data/resume";
@@ -6,6 +8,7 @@ import GrainOverlay from "@/components/fx/GrainOverlay";
 import Navbar from "@/components/chrome/Navbar";
 import StatusBar from "@/components/chrome/StatusBar";
 import EdgeRails from "@/components/chrome/EdgeRails";
+import Comet from "@/components/chrome/Comet";
 import CustomCursor from "@/components/chrome/CustomCursor";
 import Preloader from "@/components/chrome/Preloader";
 import "./globals.css";
@@ -30,7 +33,7 @@ const mono = Space_Mono({
   display: "swap",
 });
 
-const TITLE = "Prashant Yadav — Software Developer · AI/ML";
+const TITLE = "Prashant Yadav — Software Developer · AI/ML Engineer";
 const DESCRIPTION =
   "Portfolio of Prashant Yadav — software developer working across full-stack web and applied AI/ML. Builder of Prism, a deployed news-transparency platform.";
 
@@ -64,6 +67,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // build-time check: CV buttons appear once the PDF is dropped in public/
+  const resumeAvailable = existsSync(
+    join(process.cwd(), "public", identity.resumePdf.replace(/^\//, "")),
+  );
+
   return (
     <html
       lang="en"
@@ -77,10 +85,11 @@ export default function RootLayout({
           SKIP TO CONTENT
         </a>
         <SmoothScroll>
-          <Navbar />
+          <Navbar resumeAvailable={resumeAvailable} />
           {children}
           <StatusBar />
           <EdgeRails />
+          <Comet />
           <Preloader />
         </SmoothScroll>
         <CustomCursor />
