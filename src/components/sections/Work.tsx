@@ -11,6 +11,12 @@ export default function Work() {
         data-poster
         className="relative overflow-hidden bg-signal text-ink"
       >
+        {/* void panel pulled away by the motion pass to reveal the red */}
+        <div
+          aria-hidden
+          data-sweep
+          className="pointer-events-none absolute inset-0 z-10 origin-bottom scale-y-0 bg-void will-change-transform"
+        />
         {/* cream ring sliver — the poster motif crashing the frame */}
         <div
           aria-hidden

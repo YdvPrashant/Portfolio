@@ -11,6 +11,12 @@ export default function About() {
       data-poster
       className="relative overflow-hidden bg-gold text-ink"
     >
+      {/* void panel pulled away by the motion pass to reveal the gold */}
+      <div
+        aria-hidden
+        data-sweep
+        className="pointer-events-none absolute inset-0 z-10 origin-bottom scale-y-0 bg-void will-change-transform"
+      />
       {/* quiet circle motif echo */}
       <div
         aria-hidden

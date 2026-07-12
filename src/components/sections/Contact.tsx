@@ -30,7 +30,10 @@ export default function Contact() {
       <div className="relative mx-auto max-w-7xl px-5 pb-56 pt-24 text-center md:px-12 md:pb-72 md:pt-36">
         <p className="hud-label text-mint">[06] CONTACT — TRANSMISSION OPEN</p>
 
-        <h2 className="display-type mt-8 text-[clamp(3rem,10vw,8.5rem)]">
+        <h2
+          data-reveal="heading"
+          className="display-type mt-8 text-[clamp(3rem,10vw,8.5rem)]"
+        >
           LET&apos;S BUILD
           <br />
           SOMETHING<span className="text-mint">.</span>

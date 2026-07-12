@@ -1,3 +1,4 @@
+import MotionOrchestrator from "@/components/providers/MotionOrchestrator";
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
 import Stack from "@/components/sections/Stack";
@@ -14,6 +15,7 @@ export default function Home() {
       <Work />
       <Credentials />
       <Contact />
+      <MotionOrchestrator />
     </main>
   );
 }
