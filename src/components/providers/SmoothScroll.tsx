@@ -35,6 +35,31 @@ export function useScrollTo() {
   };
 }
 
+/** Scroll progress 0..1 (2-decimal steps), Lenis-driven with native fallback. */
+export function useScrollProgress(): number {
+  const lenis = useLenis();
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (lenis) {
+      const onScroll = ({ progress: p }: { progress: number }) =>
+        setProgress(Math.round(p * 100) / 100);
+      lenis.on("scroll", onScroll);
+      return () => lenis.off("scroll", onScroll);
+    }
+    const onNative = () => {
+      const max =
+        document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(max > 0 ? Math.round((window.scrollY / max) * 100) / 100 : 0);
+    };
+    onNative();
+    window.addEventListener("scroll", onNative, { passive: true });
+    return () => window.removeEventListener("scroll", onNative);
+  }, [lenis]);
+
+  return progress;
+}
+
 export default function SmoothScroll({ children }: { children: ReactNode }) {
   const [lenis, setLenis] = useState<Lenis | null>(null);
 
@@ -50,6 +75,9 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
     const raf = (time: number) => instance.raf(time * 1000);
     gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
+    // Publishing a client-only instance to context after creating it is the
+    // intended pattern here; the single extra render is the point.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLenis(instance);
 
     return () => {
