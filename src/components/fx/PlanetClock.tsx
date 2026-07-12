@@ -3,15 +3,18 @@
 import gsap from "gsap";
 import { useEffect, useRef } from "react";
 import { prefersReducedMotion } from "@/lib/hooks";
+import { THEME_CHANGE_EVENT } from "@/data/themes";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 /**
  * A 12-hour analogue clock painted onto the hero planet's cream ring: twelve
  * stationary ink hour ticks, plus a tiny astronaut that hovers at the real-time
  * hour-hand position (9:00 parks it over the 9). Purely decorative — aria-hidden
  * and pointer-events-none — except the astronaut itself, which is tappable:
- * clicking it sends it on one full clockwise lap of the ring that eases back
- * onto the current time. On arrival a small "click me" bubble greets from the
- * astronaut for a few seconds.
+ * clicking it cycles the site theme. On any theme change (its own click, the
+ * chrome swatches, the keyboard shortcut, or reset) it laps the ring once,
+ * easing back onto the current time, while the figure tumbles + pops as
+ * feedback. On arrival a small greeting bubble hints at this for a few seconds.
  *
  * Everything lives in a 0–100 square that matches the cream disc, so the same
  * numbers drive the SVG ticks and the astronaut's percentage offset. Radii are
@@ -20,8 +23,9 @@ import { prefersReducedMotion } from "@/lib/hooks";
  *
  * The astronaut node carries only inline left/top plus a Tailwind centering
  * translate — the lap animates left/top, never a transform — so nothing stacks
- * (CLAUDE.md convention 6). Under prefers-reduced-motion it's placed once and
- * left there, with no greeting and no spin.
+ * (CLAUDE.md convention 6); the tumble/pop runs on a separate inner wrapper that
+ * has no Tailwind transform. Under prefers-reduced-motion it's placed once and
+ * left there, with no greeting and no reaction, but the click still cycles.
  */
 
 const ASTRO_RADIUS = 40; // % from centre — inner edge of the cream ring band
@@ -54,7 +58,16 @@ function handAngle(now: Date) {
 
 export default function PlanetClock() {
   const astroRef = useRef<HTMLDivElement>(null);
+  const figureRef = useRef<HTMLDivElement>(null);
   const bubbleRef = useRef<HTMLDivElement>(null);
+
+  // clicking the astronaut cycles the theme; held in a ref so the vanilla click
+  // listener below never captures a stale callback
+  const { cycleTheme } = useTheme();
+  const cycleRef = useRef(cycleTheme);
+  useEffect(() => {
+    cycleRef.current = cycleTheme;
+  }, [cycleTheme]);
 
   useEffect(() => {
     const astro = astroRef.current;
@@ -73,7 +86,17 @@ export default function PlanetClock() {
     };
 
     place(); // client-only → correct time, clean hydration
-    if (prefersReducedMotion()) return; // static clock: no greeting, no spin
+
+    // clicking the astronaut cycles the site theme — wired regardless of the
+    // motion preference (reduced-motion visitors still get the colour swap)
+    astro.style.pointerEvents = "auto";
+    astro.style.cursor = "pointer";
+    const onClick = () => cycleRef.current();
+    astro.addEventListener("click", onClick);
+
+    if (prefersReducedMotion()) {
+      return () => astro.removeEventListener("click", onClick);
+    }
 
     // — arrival greeting —
     const bubble = bubbleRef.current;
@@ -85,12 +108,14 @@ export default function PlanetClock() {
       if (bubble) bubble.style.opacity = "0";
     };
 
-    // — click the astronaut → one full clockwise lap, settling on the real time —
-    astro.style.pointerEvents = "auto";
-    astro.style.cursor = "pointer";
+    // — reaction to any theme change: the astronaut laps the ring once (left/top
+    //   only, never a transform → convention 6) and eases back onto the current
+    //   time, while the inner figure tumbles + pops. Fired by THEME_CHANGE_EVENT
+    //   so the initial persisted-theme sync on load never triggers it. —
+    const figure = figureRef.current;
     let lap: gsap.core.Tween | undefined;
-    const spin = () => {
-      if (spinning) return;
+    const flourish = () => {
+      lap?.kill();
       spinning = true;
       dismissed = true;
       hideBubble();
@@ -105,8 +130,27 @@ export default function PlanetClock() {
           place(); // snap onto the true current time
         },
       });
+      if (figure) {
+        gsap.killTweensOf(figure);
+        gsap.fromTo(
+          figure,
+          { rotate: 0 },
+          { rotate: 360, duration: LAP_SECONDS, ease: "power2.inOut" },
+        );
+        gsap.fromTo(
+          figure,
+          { scale: 1 },
+          {
+            scale: 1.2,
+            duration: 0.26,
+            ease: "power2.out",
+            yoyo: true,
+            repeat: 1,
+          },
+        );
+      }
     };
-    astro.addEventListener("click", spin);
+    window.addEventListener(THEME_CHANGE_EVENT, flourish);
 
     // the hand barely creeps; a lazy tick keeps it honest over a long session
     const tick = window.setInterval(place, 30_000);
@@ -123,7 +167,9 @@ export default function PlanetClock() {
 
     return () => {
       lap?.kill();
-      astro.removeEventListener("click", spin);
+      if (figure) gsap.killTweensOf(figure);
+      window.removeEventListener(THEME_CHANGE_EVENT, flourish);
+      astro.removeEventListener("click", onClick);
       window.clearInterval(tick);
       window.clearTimeout(showT);
       window.clearTimeout(hideT);
@@ -162,7 +208,11 @@ export default function PlanetClock() {
       >
         {/* comfortable tap target around the tiny figure */}
         <span className="absolute -inset-2" />
-        <Astronaut />
+        {/* inner wrapper owns the reaction transform (tumble/pop) so it never
+            stacks with the astronaut node's Tailwind translate — convention 6 */}
+        <div ref={figureRef}>
+          <Astronaut />
+        </div>
 
         {/* "click me" greeting, emanating from the astronaut on arrival */}
         <div
@@ -170,7 +220,7 @@ export default function PlanetClock() {
           className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap opacity-0 transition-opacity duration-500"
         >
           <div className="relative rounded-md bg-void/95 px-2 py-1 font-mono text-[0.6rem] uppercase tracking-[0.18em] text-mint shadow-lg ring-1 ring-mint/30 backdrop-blur-sm">
-            click me
+            click: theme
             <span className="absolute left-1/2 top-full h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-void/95" />
           </div>
         </div>

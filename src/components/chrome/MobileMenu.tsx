@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { identity, navLinks } from "@/data/resume";
 import { useLenis, useScrollTo } from "@/components/providers/SmoothScroll";
 import { prefersReducedMotion } from "@/lib/hooks";
+import ThemeControl from "./ThemeControl";
 
 type Props = { open: boolean; onClose: () => void; resumeAvailable?: boolean };
 
@@ -115,10 +116,14 @@ export default function MobileMenu({
         ))}
       </nav>
 
-      <div data-menu-link className="hud-label flex flex-wrap gap-x-6 gap-y-2 font-bold">
-        <a href={`mailto:${identity.email}`} tabIndex={open ? 0 : -1}>
-          EMAIL ↗
-        </a>
+      <div className="flex flex-col gap-6">
+        <div data-menu-link>
+          <ThemeControl variant="poster" tabIndex={open ? 0 : -1} />
+        </div>
+        <div data-menu-link className="hud-label flex flex-wrap gap-x-6 gap-y-2 font-bold">
+          <a href={`mailto:${identity.email}`} tabIndex={open ? 0 : -1}>
+            EMAIL ↗
+          </a>
         <a href={identity.github} target="_blank" rel="noreferrer" tabIndex={open ? 0 : -1}>
           GITHUB ↗
         </a>
@@ -140,6 +145,7 @@ export default function MobileMenu({
             </a>
           </>
         )}
+        </div>
       </div>
     </div>
   );

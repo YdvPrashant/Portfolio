@@ -44,8 +44,10 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* name block */}
-      <div className="relative z-10 mt-8 lg:mt-0">
+      {/* name block — on desktop it overlaps the absolutely-positioned planet;
+          it has no interactive children, so drop pointer events there so clicks
+          reach the astronaut / planet beneath (fixes the dead astronaut click) */}
+      <div className="relative z-10 mt-8 lg:mt-0 lg:pointer-events-none">
         <p data-reveal="overline" className="hud-label text-mint">
           {identity.role}
           <span aria-hidden className="ml-2 inline-block h-3 w-2 animate-pulse bg-mint align-middle" />

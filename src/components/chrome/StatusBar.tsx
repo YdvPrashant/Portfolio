@@ -1,8 +1,10 @@
 "use client";
 
 import { identity } from "@/data/resume";
+import { THEMES } from "@/data/themes";
 import { useActiveSection, useClock, useMousePosition } from "@/lib/hooks";
 import { useScrollProgress } from "@/components/providers/SmoothScroll";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 const pad = (n: number) => String(Math.max(0, Math.round(n))).padStart(4, "0");
 
@@ -12,6 +14,8 @@ export default function StatusBar() {
   const { x, y } = useMousePosition();
   const time = useClock(identity.timezone);
   const active = useActiveSection();
+  const { theme } = useTheme();
+  const accent = THEMES.find((t) => t.id === theme) ?? THEMES[0];
 
   return (
     <div
@@ -39,7 +43,12 @@ export default function StatusBar() {
           {identity.timezoneLabel} {time ?? "--:--:--"}
         </span>
         <span className="hidden items-center gap-2 lg:flex">
-          THEME <span className="inline-block h-2.5 w-2.5 bg-mint" /> #C3FFFC
+          THEME{" "}
+          <span
+            className="inline-block h-2.5 w-2.5"
+            style={{ backgroundColor: accent.accent }}
+          />{" "}
+          {accent.accent.toUpperCase()}
         </span>
       </div>
     </div>

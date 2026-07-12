@@ -34,6 +34,72 @@
   --font-mono: var(--font-space-mono), ui-monospace, monospace;
 }
 
+/* ————————————————————————————————————————————————
+   RUNTIME THEMES — set html[data-theme="…"] to reskin the dark HUD.
+   Only the base + accent tokens move; the poster tokens (signal/gold/
+   cream/ink) stay fixed, and poster sections re-pin these back to
+   default (see [data-poster] below) so the eruptions never recolor.
+   Keep these in sync with src/data/themes.ts.
+   ———————————————————————————————————————————————— */
+
+html[data-theme="amber"] {
+  --color-void: #0b0a07;
+  --color-panel: #13110b;
+  --color-line: #2a2416;
+  --color-bone: #ece3d0;
+  --color-muted: #928a76;
+  --color-mint: #e0a94a;
+}
+
+html[data-theme="signal"] {
+  --color-void: #0c0908;
+  --color-panel: #150d0c;
+  --color-line: #2c1e1c;
+  --color-bone: #ecdedb;
+  --color-muted: #948079;
+  --color-mint: #ff5a4d;
+}
+
+html[data-theme="phosphor"] {
+  --color-void: #060a07;
+  --color-panel: #0c130d;
+  --color-line: #17281b;
+  --color-bone: #dcecdd;
+  --color-muted: #7f927f;
+  --color-mint: #62ff9b;
+}
+
+html[data-theme="ice"] {
+  --color-void: #07090b;
+  --color-panel: #0d1013;
+  --color-line: #1c2530;
+  --color-bone: #e2e9ee;
+  --color-muted: #808a92;
+  --color-mint: #8fe6ff;
+}
+
+/* smooth crossfade while switching — a transient class on <html> that eases
+   only the colour-bearing properties; removed after the swap settles */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease,
+    border-color 0.5s ease,
+    fill 0.5s ease,
+    stroke 0.5s ease,
+    outline-color 0.5s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transition,
+  html.theme-transition * {
+    transition: none;
+  }
+}
+
 /* ————— HUD utility classes ————— */
 
 /* small tracked monospace label — the telemetry voice of the site */
@@ -74,6 +140,19 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-mint);
   outline-offset: 3px;
+}
+
+/* poster fields are fixed anchors — re-pin the themeable tokens back to their
+   defaults so a runtime theme never recolors the gold/red eruptions (or the
+   mint accents used on them). Nearest-ancestor wins for inherited custom
+   properties, so this beats any html[data-theme] override for descendants. */
+[data-poster] {
+  --color-void: #0a0a0a;
+  --color-panel: #111110;
+  --color-line: #26251f;
+  --color-bone: #eae6da;
+  --color-muted: #8a877e;
+  --color-mint: #c3fffc;
 }
 
 /* poster fields are bright — swap focus ring to ink for contrast */

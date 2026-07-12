@@ -4,6 +4,7 @@ import { useState } from "react";
 import { identity, navLinks } from "@/data/resume";
 import { useScrollTo } from "@/components/providers/SmoothScroll";
 import Magnetic from "@/components/fx/MagneticButton";
+import ThemeControl from "./ThemeControl";
 import MobileMenu from "./MobileMenu";
 
 type Props = { resumeAvailable?: boolean };
@@ -44,6 +45,9 @@ export default function Navbar({ resumeAvailable = false }: Props) {
           <span className="hud-label hidden text-muted lg:inline">
             {identity.coordinates}
           </span>
+          <div className="hidden lg:block">
+            <ThemeControl />
+          </div>
           {resumeAvailable && (
             <div className="hidden items-center gap-2 sm:flex">
               <Magnetic strength={0.25}>
