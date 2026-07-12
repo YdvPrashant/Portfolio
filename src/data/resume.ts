@@ -38,7 +38,7 @@ export const heroMeta = [
 
 /** 02/ABOUT manifesto — web voice, resume facts. */
 export const about = {
-  lede: "I work both sides of the stack.",
+  lede: "I ship the product — and train the model behind it.",
   paragraphs: [
     "Web products with Next.js and TypeScript on one side; the models that make them intelligent — PyTorch, computer vision, retrieval-augmented LLMs — on the other. My flagship, Prism, is a deployed news-transparency platform that grounds LLM fact-check verdicts in live web citations.",
     "Underneath it all: a solid DSA foundation in C++ and Python, 300+ LeetCode problems deep, and a habit of building systems that degrade gracefully instead of crashing.",
