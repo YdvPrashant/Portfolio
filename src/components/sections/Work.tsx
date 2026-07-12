@@ -28,7 +28,7 @@ export default function Work() {
             label="WORK"
             title="PROOF OF WORK"
           />
-          <p className="hud-label mt-8 max-w-md font-bold text-ink/70">
+          <p className="hud-label mt-8 max-w-md font-bold text-ink/80">
             THREE SYSTEMS — ONE DEPLOYED TO PRODUCTION, ONE WATCHING VIDEO
             STREAMS, ONE MOVING MONEY PAPERWORK.
           </p>

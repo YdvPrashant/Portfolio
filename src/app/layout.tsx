@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Archivo_Black, Space_Grotesk, Space_Mono } from "next/font/google";
+import { identity } from "@/data/resume";
 import SmoothScroll from "@/components/providers/SmoothScroll";
 import GrainOverlay from "@/components/fx/GrainOverlay";
 import Navbar from "@/components/chrome/Navbar";
@@ -29,10 +30,33 @@ const mono = Space_Mono({
   display: "swap",
 });
 
+const TITLE = "Prashant Yadav — Software Developer · AI/ML";
+const DESCRIPTION =
+  "Portfolio of Prashant Yadav — software developer working across full-stack web and applied AI/ML. Builder of Prism, a deployed news-transparency platform.";
+
 export const metadata: Metadata = {
-  title: "Prashant Yadav — Software Developer · AI/ML",
-  description:
-    "Portfolio of Prashant Yadav — software developer working across full-stack web and applied AI/ML. Builder of Prism, a deployed news-transparency platform.",
+  metadataBase: new URL(identity.siteUrl),
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    url: "/",
+    siteName: "Prashant Yadav — Portfolio/2026",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
+  robots: { index: true, follow: true },
+  alternates: { canonical: "/" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0a0a0a",
 };
 
 export default function RootLayout({
@@ -46,6 +70,12 @@ export default function RootLayout({
       className={`${display.variable} ${grotesk.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-void font-body text-bone">
+        <a
+          href="#main"
+          className="hud-label sr-only bg-mint px-4 py-3 font-bold text-void focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[110]"
+        >
+          SKIP TO CONTENT
+        </a>
         <SmoothScroll>
           <Navbar />
           {children}
