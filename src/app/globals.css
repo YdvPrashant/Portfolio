@@ -1,26 +1,150 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ————————————————————————————————————————————————
+   MISSION CONTROL / POSTER ART — design tokens
+   dark HUD base (Juba) + poster eruptions (Evil Martians)
+   ———————————————————————————————————————————————— */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@theme {
+  /* palette */
+  --color-void: #0a0a0a; /* base instrument-panel black */
+  --color-panel: #111110; /* raised card surface on void */
+  --color-line: #26251f; /* hairline borders on void */
+  --color-bone: #eae6da; /* primary display/body text on dark */
+  --color-mint: #c3fffc; /* telemetry accent — chrome, links, readouts */
+  --color-signal: #f13b3b; /* poster red — WORK eruption, alerts */
+  --color-gold: #d9a93d; /* poster gold — ABOUT eruption */
+  --color-cream: #e7dfcc; /* the planet ring / paper */
+  --color-muted: #8a877e; /* secondary text on dark */
+  --color-ink: #16130e; /* text on poster fields (warm print black) */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --animate-marquee: marquee 28s linear infinite;
+  --animate-marquee-slow: marquee 46s linear infinite;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
   }
 }
 
+@theme inline {
+  --font-display: var(--font-archivo), "Arial Black", sans-serif;
+  --font-body: var(--font-grotesk), system-ui, sans-serif;
+  --font-mono: var(--font-space-mono), ui-monospace, monospace;
+}
+
+/* ————— HUD utility classes ————— */
+
+/* small tracked monospace label — the telemetry voice of the site */
+@utility hud-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* giant display type, tight and heavy */
+@utility display-type {
+  font-family: var(--font-display);
+  line-height: 0.86;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+}
+
+/* ————— base ————— */
+
+html {
+  scrollbar-color: #2c2b26 var(--color-void);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-void);
+  color: var(--color-bone);
+  font-family: var(--font-body);
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-mint);
+  color: var(--color-void);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-mint);
+  outline-offset: 3px;
+}
+
+/* poster fields are bright — swap focus ring to ink for contrast */
+[data-poster] :focus-visible {
+  outline-color: var(--color-ink);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-void);
+}
+::-webkit-scrollbar-thumb {
+  background: #2c2b26;
+  border: 2px solid var(--color-void);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-mint);
+}
+
+/* ————— film grain (fixed overlay, used by <GrainOverlay/>) ————— */
+
+.grain-layer {
+  position: fixed;
+  inset: -100%;
+  z-index: 80;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.055;
+  mix-blend-mode: overlay;
+  animation: grain-jitter 0.9s steps(8) infinite;
+}
+
+@keyframes grain-jitter {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-2%, 3%);
+  }
+  50% {
+    transform: translate(3%, -2%);
+  }
+  75% {
+    transform: translate(-3%, -3%);
+  }
+  100% {
+    transform: translate(2%, 2%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain-layer {
+    animation: none;
+  }
+}
+
+/* ————— lenis smooth-scroll host styles ————— */
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
